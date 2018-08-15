@@ -106,8 +106,8 @@ void TileManager::loadTilesForFieldOfView(const QRectF& FOV, const unsigned int 
   }
 }
 
-void TileManager::onTileLoaded(QPixmap* tile, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int tileLevel) {
-  WSITileGraphicsItem* item = new WSITileGraphicsItem(tile, tileX, tileY, tileSize, tileByteSize, tileLevel, _lastRenderLevel, _levelDownsamples, this);
+void TileManager::onTileLoaded(QPixmap* background, QPixmap* foreground, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int tileLevel) {
+  WSITileGraphicsItem* item = new WSITileGraphicsItem(background, foreground, tileX, tileY, tileSize, tileByteSize, tileLevel, _lastRenderLevel, _levelDownsamples, this);
   std::stringstream ss;
   ss << tileX << "_" << tileY << "_" << tileLevel;
   std::string key;
@@ -238,4 +238,14 @@ void TileManager::refresh() {
   unsigned int level = _lastLevel;
   loadAllTilesForLevel(_lastRenderLevel);
   loadTilesForFieldOfView(QRectF(tileCoordinatesToPixelCoordinates(topLeft, level), tileCoordinatesToPixelCoordinates(bottomRight, level)), level);
+}
+
+void TileManager::setForegroundRendering(bool render) {
+  QList<QGraphicsItem *> itms = _scene->items();
+  for (QList<QGraphicsItem *>::iterator it = itms.begin(); it != itms.end(); ++it) {
+    WSITileGraphicsItem* itm = dynamic_cast<WSITileGraphicsItem*>((*it));
+    if (itm) {
+      itm->setForegroundRendering(render);
+    }
+  }
 }

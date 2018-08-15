@@ -49,6 +49,7 @@ VisualizationWorkstationExtensionPlugin::~VisualizationWorkstationExtensionPlugi
 bool VisualizationWorkstationExtensionPlugin::initialize(PathologyViewer* viewer) {
   _viewer = viewer;
   connect(this, SIGNAL(changeForegroundImage(std::weak_ptr<MultiResolutionImage>, float)), viewer, SLOT(onForegroundImageChanged(std::weak_ptr<MultiResolutionImage>, float)));
+  connect(this, SIGNAL(changeForegroundRendering(bool)), viewer, SLOT(onForegroundRenderingChanged(bool)));
   return true;
 }
 
@@ -276,14 +277,13 @@ void VisualizationWorkstationExtensionPlugin::onImageClosed() {
 }
 
 void VisualizationWorkstationExtensionPlugin::onEnableLikelihoodToggled(bool toggled) {
-  if (!toggled) {
-    emit changeForegroundImage(std::weak_ptr<MultiResolutionImage>(), _foregroundScale);
+  if (!toggled) {    
     _renderingEnabled = false;
   }
   else {
-    emit changeForegroundImage(_foreground, _foregroundScale);
     _renderingEnabled = true;
   }
+  emit changeForegroundRendering(_renderingEnabled);
 }
 
 void VisualizationWorkstationExtensionPlugin::onOpacityChanged(double opacity) {

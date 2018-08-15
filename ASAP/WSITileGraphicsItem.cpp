@@ -13,19 +13,24 @@
 #include <QElapsedTimer>
 
 
-WSITileGraphicsItem::WSITileGraphicsItem(QPixmap* item, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int itemLevel, unsigned int lastRenderLevel, const std::vector<float>& imgDownsamples, TileManager* manager) :
+WSITileGraphicsItem::WSITileGraphicsItem(QPixmap* background, QPixmap* foreground, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int itemLevel, unsigned int lastRenderLevel, const std::vector<float>& imgDownsamples, TileManager* manager) :
   QGraphicsItem(),
-  _item(NULL),
+  _bg(NULL),
+  _fg(NULL),
   _manager(NULL),
   _tileX(tileX),
   _tileY(tileY),
   _tileSize(tileSize),
   _tileByteSize(tileByteSize),
   _itemLevel(itemLevel),
-  _lastRenderLevel(lastRenderLevel)
+  _lastRenderLevel(lastRenderLevel),
+  _renderForeground(true)
 {
-  if (item) {
-    _item = item;
+  if (background) {
+    _bg = background;
+  }
+  if (foreground) {
+    _fg = foreground;
   }
   if (manager) {
     _manager = manager;
@@ -52,9 +57,13 @@ WSITileGraphicsItem::WSITileGraphicsItem(QPixmap* item, unsigned int tileX, unsi
 }
 
 WSITileGraphicsItem::~WSITileGraphicsItem() {
-  if (_item) {
-    delete _item;
-    _item = NULL;
+  if (_bg) {
+    delete _bg;
+    _bg = NULL;
+  }
+  if (_fg) {
+    delete _fg;
+    _fg = NULL;
   }
   if (_manager) {
     _manager = NULL;
@@ -70,7 +79,7 @@ void WSITileGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
                                 QWidget *widget){
   float lod = option->levelOfDetailFromTransform(painter->worldTransform());
   if (lod > _lowerLOD) {
-    if (_item) {
+    if (_bg) {
       bool draw = false;
       if (lod <= _upperLOD) {
         draw = true;
@@ -80,7 +89,13 @@ void WSITileGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
       }
       if (draw) {
         QRectF pixmapArea = QRectF((option->exposedRect.left() + (_physicalSize / 2))*(_tileSize / _physicalSize), (option->exposedRect.top() + (_physicalSize / 2))*(_tileSize / _physicalSize), option->exposedRect.width()*(_tileSize / _physicalSize), option->exposedRect.height()*(_tileSize / _physicalSize));
-        painter->drawPixmap(option->exposedRect, *_item, pixmapArea);
+        painter->drawPixmap(option->exposedRect, *_bg, pixmapArea);
+        if (_fg) {
+          if (_renderForeground) {
+            painter->setOpacity(.5);
+            painter->drawPixmap(option->exposedRect, *_fg, pixmapArea);
+          }
+        }
         /*
         if (_itemLevel == 0) {
         painter->setPen(QPen(QColor("white")));
@@ -115,9 +130,14 @@ void WSITileGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
   }
 }
 
+void WSITileGraphicsItem::setForegroundRendering(bool render) {
+  this->_renderForeground = render;  
+  this->update();
+}
+
 void WSITileGraphicsItem::debugPrint() {
   std::cout << "Position (x,y): (" << this->pos().x() << ", "<< this->pos().y() << ")" << std::endl;
-  std::cout << "Has pixmap: " << (_item ? "Yes" : "No") << std::endl;
+  std::cout << "Has pixmap: " << (_bg ? "Yes" : "No") << std::endl;
   std::cout << "Visible: " << this->isVisible() << std::endl;
   std::cout << "Level: " << _itemLevel << std::endl;
   std::cout << "Bounding rectangle (x,y,w,h): (" << _boundingRect.x() << ", " << _boundingRect.y() << ", " << _boundingRect.width() << ", " << _boundingRect.height() << ")" << std::endl;

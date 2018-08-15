@@ -56,12 +56,13 @@ public:
   std::vector<QPainterPath> getCoverageMaps();
   void setCoverageMapModeToCache();
   void setCoverageMapModeToVisited();
+  void setForegroundRendering(bool render);
   
   void clear();
   void refresh();
 
 public slots:
-  void onTileLoaded(QPixmap* tile, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int tileLevel);
+  void onTileLoaded(QPixmap* background, QPixmap* foreground, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int tileLevel);
   void onTileRemoved(WSITileGraphicsItem* tile);
 
 };

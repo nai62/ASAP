@@ -57,7 +57,7 @@ private :
   QPixmap renderForegroundImage(std::shared_ptr<MultiResolutionImage> local_for_img, const RenderJob& currentJob, pathology::ColorType colorType);
 
 signals:
-  void tileLoaded(QPixmap* tile, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int tileLevel);
+  void tileLoaded(QPixmap* background, QPixmap* foreground, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int tileLevel);
 
 };
   

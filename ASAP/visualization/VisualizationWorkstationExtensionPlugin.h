@@ -58,6 +58,7 @@ public slots:
 
 signals: 
     void changeForegroundImage(std::weak_ptr<MultiResolutionImage>, float scale);
+    void changeForegroundRendering(bool render);
 };
 
 #endif

@@ -253,7 +253,7 @@ void PathologyViewer::initialize(std::shared_ptr<MultiResolutionImage> img) {
   setMouseTracking(true);
   std::vector<RenderWorker*> workers = _renderthread->getWorkers();
   for (int i = 0; i < workers.size(); ++i) {
-    QObject::connect(workers[i], SIGNAL(tileLoaded(QPixmap*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)), _manager, SLOT(onTileLoaded(QPixmap*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)));
+    QObject::connect(workers[i], SIGNAL(tileLoaded(QPixmap*, QPixmap*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)), _manager, SLOT(onTileLoaded(QPixmap*, QPixmap*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)));
   }
   initializeImage(scene(), tileSize, lastLevel);
   initializeGUIComponents(lastLevel);
@@ -272,6 +272,13 @@ void PathologyViewer::onForegroundImageChanged(std::weak_ptr<MultiResolutionImag
     _manager->refresh();
   }
 }
+
+void PathologyViewer::onForegroundRenderingChanged(bool render) {
+  if (_renderthread) {
+    _manager->setForegroundRendering(render);
+  }
+}
+
 
 void PathologyViewer::setForegroundLUT(const std::string& LUTname) {
   if (_renderthread) {

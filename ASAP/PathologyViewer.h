@@ -69,6 +69,7 @@ public slots :
     void changeActiveTool();
     void onFieldOfViewChanged(const QRectF& FOV, const unsigned int level);
     void onForegroundImageChanged(std::weak_ptr<MultiResolutionImage> for_img, float scale);
+    void onForegroundRenderingChanged(bool render);
 
 private :
     

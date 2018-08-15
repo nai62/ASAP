@@ -10,7 +10,7 @@ class MultiResolutionImage;
 class WSITileGraphicsItem : public QGraphicsItem {
 public:
   // make sure to set `item` to NULL in the constructor
-  WSITileGraphicsItem(QPixmap* item, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int itemLevel, unsigned int lastRenderLevel, const std::vector<float>& imgDownsamples, TileManager* manager);
+  WSITileGraphicsItem(QPixmap* background, QPixmap* foreground, unsigned int tileX, unsigned int tileY, unsigned int tileSize, unsigned int tileByteSize, unsigned int itemLevel, unsigned int lastRenderLevel, const std::vector<float>& imgDownsamples, TileManager* manager);
   ~WSITileGraphicsItem();
 
   // you will need to add a destructor
@@ -26,12 +26,15 @@ public:
   unsigned int getTileY() { return _tileY; }
   unsigned int getTileLevel() { return _itemLevel; }
   unsigned int getTileSize() { return _tileSize; }
+  void setForegroundRendering(bool render);
 
 private:
   // you'll probably want to store information about where you're
   // going to load the pixmap from, too
 
-  QPixmap *_item;
+  QPixmap* _bg;
+  QPixmap* _fg;
+  bool _renderForeground;
   float _physicalSize;
   float _upperLOD;
   float _lowerLOD;

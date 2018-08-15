@@ -117,12 +117,7 @@ void RenderWorker::run()
       else if (local_bck_img->getDataType() == pathology::DataType::UInt32) {
         temp = renderBackgroundImage<unsigned int>(local_bck_img, currentJob, cType);
       }
-      if (!_foreground.isNull()) {
-        QPainter painter(&temp);
-        painter.setOpacity(_opacity);
-        painter.drawPixmap(0, 0, _foreground);
-      }
-      emit tileLoaded(new QPixmap(temp), currentJob._imgPosX, currentJob._imgPosY, currentJob._tileSize, currentJob._tileSize*currentJob._tileSize*local_bck_img->getSamplesPerPixel(), currentJob._level);
+      emit tileLoaded(new QPixmap(temp), new QPixmap(_foreground), currentJob._imgPosX, currentJob._imgPosY, currentJob._tileSize, currentJob._tileSize*currentJob._tileSize*local_bck_img->getSamplesPerPixel(), currentJob._level);
       mutex.unlock();
     }
   }
