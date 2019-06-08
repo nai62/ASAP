@@ -18,11 +18,13 @@ matrix:
       script:
       - docker run -v ${PWD}:/artifacts build_env
     - os: windows
+      env:
+      - PLATFORM=x64
       before_install:
       - dir C:/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/10.0.17134.0/x64
       - cmd.exe /C 'cd && "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64 && cd && cd "C:/Users/travis/build/computationalpathologygroup/ASAP" && dir'
       - curl -vLO  http://download.qt.io/official_releases/online_installers/qt-unified-windows-x64-online.exe
-      - "./qt-unified-windows-x86-online.exe --verbose --script qt-installer-windows.qs"
+      - "./qt-unified-windows-x64-online.exe --verbose --script ./buildtools/qt-installer-windows.qs"
       - "ls -la C:/Qt/5.12.3/msvc2017/bin/qtenv2.bat"
       
       script:
