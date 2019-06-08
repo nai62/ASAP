@@ -1,16 +1,31 @@
-language: minimal
+language: cpp
 
-env:
-  -  NO_GUI=true PYTHON_VERSION=3.7
-  -  NO_GUI=true PYTHON_VERSION=3.6
-  -  NO_GUI=false PYTHON_VERSION=3.7
-  -  NO_GUI=false PYTHON_VERSION=3.6  
+matrix:
+    include:
+    - os: linux
+      env:
+      -  NO_GUI=true PYTHON_VERSION=3.7
+      -  NO_GUI=true PYTHON_VERSION=3.6
+      -  NO_GUI=false PYTHON_VERSION=3.7
+      -  NO_GUI=false PYTHON_VERSION=3.6  
 
-services:
-  - docker
+      services:
+      - docker
 
-before_install:
-- docker build -t build_env ./buildtools --build-arg only_multiresolutionimageinterface=$NO_GUI --build-arg python_version=$PYTHON_VERSION
+      before_install:
+      - docker build -t build_env ./buildtools --build-arg only_multiresolutionimageinterface=$NO_GUI --build-arg python_version=$PYTHON_VERSION
 
-script:
-- docker run -v ${PWD}:/artifacts build_env
+      script:
+      - docker run -v ${PWD}:/artifacts build_env
+    - os: windows
+      before_install:
+      - dir C:/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/10.0.17134.0/x64
+      - cmd.exe /C 'cd && "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat"
+      x64 && cd && cd "C:/Users/travis/build/computationalpathology/ASAP" && dir'
+      - curl -vLO  http://download.qt.io/official_releases/online_installers/qt-unified-windows-x64-online.exe
+      - "./qt-unified-windows-x86-online.exe --verbose --script qt-installer-windows.qs"
+      - ls -la C:/Qt/5.12.3/msvc2017/bin/qtenv2.bat
+    script:
+      - cmd.exe /C 'cd && "C:\Qt\5.12.3\msvc2017\bin\qtenv2.bat" && cd && "C:\Program
+      Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat"
+      x64 && cd "C:\Users\travis\build\computationalpathology"
